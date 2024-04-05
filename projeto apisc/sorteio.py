@@ -21,6 +21,7 @@ def main():
         4 - Listar alunos que serão sorteados
         5 - Listar Grupos
         6 - Gravar resultado em arquivo
+        7 - Funcionalidade Secreta (Hehe)
         0 - Sair
             
         Alunos disponíveis para sorteio: {len(alunos)}
@@ -211,6 +212,14 @@ Digite um valor que seja maior que 0 e menor que o tamanho da lista de alunos!''
                 input('Pressione ENTER para sair...')
                 os.system('cls')
 
+        # funcionalidade secreta KKKK
+        elif opcao == '7':
+            import webbrowser
+            new=2
+            url="https://www.youtube.com/watch?v=LsL7-CDsgXc"
+
+            webbrowser.open(url,new=new)
+            
         # sair
         elif opcao == '0':
             print('>>> Saindo...')
