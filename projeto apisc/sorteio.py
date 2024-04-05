@@ -53,24 +53,33 @@ def main():
             while excluir_outro.lower() == 's':
                 os.system('cls')
                 indice = 0
+
                 # mostra todos os alunos disponiveis para sorteio
                 for indice in range(len(alunos)):
                     print(f'{indice+1}: {alunos[indice]}')
                 
                 print('\nQual aluno deseja excluir? (Digite o número correspondente ao aluno, que aparece na tela) ')
                 escolha = int(input()) # usuario escolhe o numero do aluno
-                del alunos[escolha-1] # deleta o aluno da lista de disponiveis
+                if escolha > len(alunos) or escolha < 1: # caso digite um numero invalido
+                    os.system('cls')
+                    print('Erro! Você tentou excluir um aluno que não está listado.')
+                    time.sleep(0.5)
+                    input('Pressione ENTER para sair...')
+                    pass
+                    
+                else:
+                    del alunos[escolha-1] # deleta o aluno da lista de disponiveis
                 
-                print('Aguarde...')
-                time.sleep(0.5)
-                print('Aluno excluído com sucesso!')
+                    print('Aguarde...')
+                    time.sleep(0.5)
+                    print('Aluno excluído com sucesso!')
 
-                excluir_outro = str(input('Deseja excluir outro aluno? (s/n) '))
-                while excluir_outro.lower() != 's' and excluir_outro.lower() != 'n':
-                    print('Digite uma opção válida! (s ou n)')
                     excluir_outro = str(input('Deseja excluir outro aluno? (s/n) '))
-                
-                os.system('cls')
+                    while excluir_outro.lower() != 's' and excluir_outro.lower() != 'n':
+                        print('Digite uma opção válida! (s ou n)')
+                        excluir_outro = str(input('Deseja excluir outro aluno? (s/n) '))
+                    
+                    os.system('cls')
                 
             
         # Sortear grupos
@@ -82,38 +91,52 @@ def main():
             # se o usuario botar que sejam menos de 1 grupo ou mais grupos que a quantidade de pessoas, esse bloco é exibido
             quantidade_grupos = int(input('Quantos grupos deseja? '))
             if quantidade_grupos > len(aux) or quantidade_grupos < 1:
-                print('Quantidade de grupos inválida!! Digite um valor que seja maior que 0 e menor que o tamanho da lista de alunos!')
+                os.system('cls')
+                print('''Quantidade de grupos inválida!!
+Digite um valor que seja maior que 0 e menor que o tamanho da lista de alunos!''')
+                input('Pressione ENTER para sair...')
+                os.system('cls')
                 quantidade_grupos = int(input('Quantos grupos deseja? '))
 
-            divisao_grupos = len(aux) // quantidade_grupos
-            
             # esvazia a lista de grupos, possibilitando o 're-sorteio'
             lista_grupos = []
+            cont_grupos = 0
+            somatorio_escolhas = 0
+            
 
             # para cada grupo
-            for i in range(quantidade_grupos):
+            while cont_grupos < quantidade_grupos:
                 grupo = []
-                # se for o ultimo grupo, pega as pessoas que faltam e botam nele
-                if i+1 == quantidade_grupos:
-                    for integrantes in range(len(aux)):
-                        sorteado = random.choice(aux) # escolhe uma pessoa aleatória
-                        grupo.append(sorteado) # bota no grupo que ta sendo trabalhado
-                        aux.remove(sorteado) # remove a pessoa da lista auxiliar
+                divisao_grupo = int(input(f'Informe quantos integrantes terá o grupo {cont_grupos+1}: '))
+                somatorio_escolhas += divisao_grupo
+                
+                # caso o usuario informe mais alunos do que o previsto
+                if somatorio_escolhas > len(alunos) or divisao_grupo > len(aux):
+                    print('Erro!! Você está alocando mais alunos do que a quantidade existente deles!')
+                    print(f'Existem {len(alunos)} disponíveis, você tentou alocar {somatorio_escolhas}. Refaça o sorteio para prosseguir.')
+                    input('Pressione ENTER para sair...')
+                    cont_grupos+=1
+                    lista_grupos = []
+                    break
 
-                # se nao for o ultimo grupo, pega o número necessario e botam nele. ex: 21/4 ficam grupos de 5 pessoas
                 else:
-                    for integrantes in range(divisao_grupos):
+                    for integrantes in range(divisao_grupo):
                         sorteado = random.choice(aux)
                         grupo.append(sorteado)
                         aux.remove(sorteado)
-                        
-                lista_grupos.append(sorted(grupo))
+                    
+                    lista_grupos.append(sorted(grupo))
+                
+                    cont_grupos += 1
+
             
-            print('Sorteando...')
-            time.sleep(1)
-            print('Grupos sorteados!')
-            time.sleep(0.75)
-            os.system('cls')
+            if somatorio_escolhas <= len(alunos):
+                print('Sorteando...')
+                time.sleep(1)
+                print('Grupos sorteados!')
+                time.sleep(0.75)
+                os.system('cls')
+            
         
         # ver alunos que participarão do sorteio
         elif opcao == '4':
@@ -175,7 +198,7 @@ def main():
                     resultado.write('\n')
                     # mostra os integrantes de cada grupo em ordem
                     for integrante in range(len(lista_grupos[grupos])):
-                        resultado.write(f'{integrante+1} - {lista_grupos[grupos][integrante].rstrip()} -\n')
+                        resultado.write(f'PC {integrante+1} - {lista_grupos[grupos][integrante].rstrip()} \n')
                         
                         # se o integrante for o ultimo, ele quebra a linha
                         if integrante+1 == len(lista_grupos[grupos]):
